@@ -44,13 +44,16 @@ const ResumeDownloadButton = ({ variant = 'primary' }) => {
   const handleDownload = async (resume) => {
     setDownloadingId(resume._id);
     try {
-      // Use the download endpoint with the resume ID
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/resumes/download/${resume._id}`);
+      // ✅ Backend proxy endpoint use karo — Cloudinary URL nahi
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/resumes/download/${resume._id}`
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const blob = await response.blob();
-      
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -59,7 +62,7 @@ const ResumeDownloadButton = ({ variant = 'primary' }) => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       toast.success(`Downloading ${resume.title}`);
     } catch (error) {
       console.error('Download error:', error);
