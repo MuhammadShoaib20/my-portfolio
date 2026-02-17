@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { blogsAPI } from '../utils/api';
 import BlogCard from '../components/common/BlogCard';
 import toast from 'react-hot-toast';
@@ -10,11 +10,7 @@ const Blog = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
-  useEffect(() => {
-    fetchBlogs();
-  }, [filter]);
-
-  const fetchBlogs = async () => {
+  const fetchBlogs = useCallback(async () => {
     try {
       setLoading(true);
       const params = filter !== 'all' ? { category: filter } : {};
@@ -25,7 +21,11 @@ const Blog = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchBlogs();
+  }, [fetchBlogs]);
 
   return (
     <div className="min-h-screen py-12">

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { blogsAPI } from '../utils/api';
 import toast from 'react-hot-toast';
-import { format } from 'date-fns';
 import { FaPlus, FaEdit, FaTrash, FaEye, FaHeart, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 
 const ManageBlogs = () => {

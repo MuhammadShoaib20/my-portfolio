@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { projectsAPI } from '../utils/api';
 import ProjectCard from '../components/common/ProjectCard';
 import toast from 'react-hot-toast';
@@ -12,11 +12,7 @@ const Projects = () => {
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
 
-  useEffect(() => {
-    fetchProjects();
-  }, [filter]);
-
-  const fetchProjects = async (searchTerm = search) => {
+  const fetchProjects = useCallback(async (searchTerm = search) => {
     try {
       setLoading(true);
       const params = {};
@@ -29,12 +25,16 @@ const Projects = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter, search]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     setSearch(searchInput);
-    fetchProjects(searchInput);
+    // fetchProjects will be called automatically because `search` changed, triggering useEffect
   };
 
   const handleFilterChange = (cat) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { projectsAPI } from '../utils/api';
 import toast from 'react-hot-toast';
@@ -9,12 +9,7 @@ const ProjectDetail = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchProject();
-    window.scrollTo(0, 0);
-  }, [id]);
-
-  const fetchProject = async () => {
+  const fetchProject = useCallback(async () => {
     try {
       setLoading(true);
       const res = await projectsAPI.getById(id);
@@ -24,7 +19,12 @@ const ProjectDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchProject();
+    window.scrollTo(0, 0);
+  }, [fetchProject]);
 
   const handleLike = async () => {
     try {

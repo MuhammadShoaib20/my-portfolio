@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { blogsAPI } from '../utils/api';
 import toast from 'react-hot-toast';
@@ -10,12 +10,7 @@ const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchBlog();
-    window.scrollTo(0, 0);
-  }, [slug]);
-
-  const fetchBlog = async () => {
+  const fetchBlog = useCallback(async () => {
     try {
       setLoading(true);
       const res = await blogsAPI.getBySlug(slug);
@@ -25,7 +20,12 @@ const BlogDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
+
+  useEffect(() => {
+    fetchBlog();
+    window.scrollTo(0, 0);
+  }, [fetchBlog]);
 
   const handleLike = async () => {
     try {
