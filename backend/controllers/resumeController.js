@@ -88,15 +88,25 @@ const toggleResumeActive = async (req, res) => {
   }
 };
 
-// @desc    Download a resume file by ID (redirect to Cloudinary)
+// @desc    Download a resume file by ID
 // @route   GET /api/resumes/download/:id
 // @access  Public
 const downloadResume = async (req, res) => {
   try {
     const resume = await Resume.findById(req.params.id);
     if (!resume) return res.status(404).json({ message: 'Resume not found' });
-    // Redirect to the Cloudinary URL (which will download automatically)
-    res.redirect(resume.fileUrl);
+
+    const response = await fetch(resume.fileUrl);
+    if (!response.ok) throw new Error('Failed to fetch file from Cloudinary');
+
+    const contentType =
+      resume.fileType === 'pdf' ? 'application/pdf' : 'application/octet-stream';
+    const filename = resume.title.replace(/\s+/g, '_') + '.' + resume.fileType;
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    response.body.pipe(res);
   } catch (error) {
     console.error('Download error:', error);
     res.status(500).json({ message: 'Server error' });
