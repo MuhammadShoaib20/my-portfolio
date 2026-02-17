@@ -1,6 +1,6 @@
 const cloudinary = require('cloudinary').v2;
 
-// Configure Cloudinary (credentials from .env)
+// Configure Cloudinary (credentials from environment variables)
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -12,16 +12,24 @@ const uploadFile = async (req, res) => {
     const { image } = req.body;
     if (!image) return res.status(400).json({ message: 'No file data' });
 
-    // Upload to Cloudinary
+    // Determine resource type from base64 MIME type
+    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches) return res.status(400).json({ message: 'Invalid file data' });
+
+    const mimeType = matches[1];
+    const isImage = mimeType.startsWith('image/');
+    const resourceType = isImage ? 'image' : 'raw'; // PDF, DOC → raw
+
     const result = await cloudinary.uploader.upload(image, {
-      folder: 'portfolio/resumes',        // optional folder
-      resource_type: 'auto',               // auto-detect PDF, image, etc.
+      folder: 'portfolio/resumes',
+      resource_type: resourceType,
+      access_mode: 'public',
     });
 
     res.status(200).json({
       success: true,
       url: result.secure_url,
-      fileType: result.format,              // e.g., 'pdf'
+      fileType: result.format,
       fileSize: result.bytes,
     });
   } catch (error) {

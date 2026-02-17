@@ -94,10 +94,8 @@ const toggleResumeActive = async (req, res) => {
 const downloadResume = async (req, res) => {
   try {
     const resume = await Resume.findById(req.params.id);
-    if (!resume) {
-      return res.status(404).json({ message: 'Resume not found' });
-    }
-    // Redirect directly to the Cloudinary URL
+    if (!resume) return res.status(404).json({ message: 'Resume not found' });
+    // Redirect to the Cloudinary URL (which will download automatically)
     res.redirect(resume.fileUrl);
   } catch (error) {
     console.error('Download error:', error);
