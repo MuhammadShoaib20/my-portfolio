@@ -44,14 +44,13 @@ const ResumeDownloadButton = ({ variant = 'primary' }) => {
   const handleDownload = async (resume) => {
     setDownloadingId(resume._id);
     try {
-      // Use the new download endpoint
-      const response = await fetch(`http://localhost:5000/api/resumes/download/${resume._id}`);
+      // Use the download endpoint with the resume ID
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/resumes/download/${resume._id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const blob = await response.blob();
       
-      // Create a download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
