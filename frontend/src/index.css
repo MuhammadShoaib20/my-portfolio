@@ -38,3 +38,7 @@
     @apply backdrop-blur-md bg-white/30 dark:bg-slate-800/30 border border-white/20 dark:border-slate-700/30 rounded-2xl shadow-lg;
   }
 }
+/* Force vertical scrollbar to always be visible – prevents layout shift */
+html {
+  overflow-y: scroll;
+}
