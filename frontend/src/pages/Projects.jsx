@@ -34,7 +34,7 @@ const Projects = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     setSearch(searchInput);
-    // fetchProjects will be called automatically because `search` changed, triggering useEffect
+    // fetchProjects will be called because `search` changed, triggering useEffect
   };
 
   const handleFilterChange = (cat) => {
@@ -55,12 +55,13 @@ const Projects = () => {
         {/* Sticky Filter Bar */}
         <div className="sticky top-16 z-40 backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border-b border-white/20 dark:border-slate-700/30 py-4 mb-8">
           <div className="container-custom flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap gap-2 overflow-x-auto pb-1">
+            {/* Category filters - horizontal scroll on mobile */}
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide w-full md:w-auto">
               {categories.map(cat => (
                 <button
                   key={cat}
                   onClick={() => handleFilterChange(cat)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition flex-shrink-0 ${
                     filter === cat
                       ? 'bg-primary text-white'
                       : 'bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 text-slate-600 dark:text-slate-300 hover:bg-primary hover:text-white'
@@ -70,6 +71,8 @@ const Projects = () => {
                 </button>
               ))}
             </div>
+
+            {/* Search form */}
             <form onSubmit={handleSearch} className="flex w-full sm:w-auto gap-2">
               <input
                 type="text"

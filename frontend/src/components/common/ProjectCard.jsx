@@ -24,7 +24,7 @@ const ProjectCard = ({ project }) => {
 
       <div className="p-5">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white line-clamp-1">{project.title}</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white truncate">{project.title}</h3>
           <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
             {project.category}
           </span>
