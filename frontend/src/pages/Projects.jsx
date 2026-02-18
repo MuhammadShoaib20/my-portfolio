@@ -57,42 +57,40 @@ const Projects = () => {
         </div>
 
         {/* Sticky Filter + Search Bar */}
-        <div className="sticky top-16 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 py-3 mb-6 sm:mb-8 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+        <div className="sticky top-16 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 py-3 mb-6 sm:mb-8 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
 
-          {/* Search Form — full width on mobile, shown on top */}
+          {/* Search Form — full width on mobile */}
           <form
             onSubmit={handleSearch}
-            className="flex w-full gap-2 mb-3 sm:mb-0 sm:hidden"
+            className="flex w-full gap-2 mb-3 sm:hidden"
           >
             <input
               type="text"
               placeholder="Search projects..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="flex-1 min-w-0 px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+              className="flex-1 min-w-0 px-3 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
             />
             <button
               type="submit"
-              className="px-5 py-2 bg-primary text-white rounded-full font-medium hover:bg-primary-dark transition text-sm whitespace-nowrap flex-shrink-0"
+              className="px-4 py-2 bg-primary text-white rounded-full font-medium hover:bg-primary-dark transition text-sm whitespace-nowrap flex-shrink-0"
             >
               Search
             </button>
           </form>
 
-          {/* Categories + Search (desktop: side by side, mobile: categories scroll row) */}
-          <div className="flex items-center justify-between gap-3">
-
-            {/* Category Pills — horizontal scroll */}
-            <div className="flex-1 overflow-x-auto scrollbar-hide -mx-1 px-1">
-              <div className="flex gap-2 pb-1">
+          {/* Category Pills — full width horizontal scroll, no right-side overflow */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide">
+              <div className="flex gap-2 pb-1 pr-1">
                 {categories.map(cat => (
                   <button
                     key={cat}
                     onClick={() => handleFilterChange(cat)}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex-shrink-0 border ${
                       filter === cat
-                        ? 'bg-primary text-white shadow-sm'
-                        : 'bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white hover:border-primary'
+                        ? 'bg-primary text-white border-primary shadow-sm'
+                        : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white hover:border-primary'
                     }`}
                   >
                     {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -101,7 +99,7 @@ const Projects = () => {
               </div>
             </div>
 
-            {/* Search — hidden on mobile (shown above), visible sm+ */}
+            {/* Search — only on sm+ screens */}
             <form
               onSubmit={handleSearch}
               className="hidden sm:flex gap-2 flex-shrink-0"
@@ -111,7 +109,7 @@ const Projects = () => {
                 placeholder="Search projects..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="w-52 lg:w-64 px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                className="w-48 lg:w-64 px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
               />
               <button
                 type="submit"
