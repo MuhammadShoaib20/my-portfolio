@@ -43,46 +43,52 @@ const Projects = () => {
   };
 
   return (
-    <div className="min-h-screen py-12 overflow-x-hidden">
-      <div className="container-custom">
+    <div className="min-h-screen py-12">
+      <div className="container-custom px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Selected Projects</h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">Explore my recent work and case studies</p>
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 sm:mb-4">
+            Selected Projects
+          </h1>
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400">
+            Explore my recent work and case studies
+          </p>
         </div>
 
         {/* Sticky Filter Bar */}
-        <div className="sticky top-16 z-40 backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border-b border-white/20 dark:border-slate-700/30 py-4 mb-8">
-          <div className="container-custom flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="sticky top-16 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 py-4 mb-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Categories - horizontal scroll on mobile */}
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide w-full md:w-auto">
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => handleFilterChange(cat)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition flex-shrink-0 ${
-                    filter === cat
-                      ? 'bg-primary text-white'
-                      : 'bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 text-slate-600 dark:text-slate-300 hover:bg-primary hover:text-white'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+            <div className="w-full overflow-x-auto scrollbar-hide">
+              <div className="flex gap-2 pb-2">
+                {categories.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => handleFilterChange(cat)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition flex-shrink-0 ${
+                      filter === cat
+                        ? 'bg-primary text-white'
+                        : 'bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white hover:border-primary'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Search */}
-            <form onSubmit={handleSearch} className="flex w-full md:w-auto gap-2">
+            {/* Search Form */}
+            <form onSubmit={handleSearch} className="flex w-full sm:w-auto gap-2">
               <input
                 type="text"
                 placeholder="Search projects..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="flex-1 md:w-64 px-4 py-2 rounded-full bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-primary"
+                className="flex-1 sm:w-64 px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
               />
               <button
                 type="submit"
-                className="px-6 py-2 bg-primary text-white rounded-full font-medium hover:bg-primary-dark transition"
+                className="px-6 py-2 bg-primary text-white rounded-full font-medium hover:bg-primary-dark transition text-sm"
               >
                 Search
               </button>
@@ -92,9 +98,9 @@ const Projects = () => {
 
         {/* Project Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-80 rounded-2xl bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 animate-pulse"></div>
+              <div key={i} className="h-64 sm:h-80 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse"></div>
             ))}
           </div>
         ) : projects.length === 0 ? (
@@ -103,7 +109,7 @@ const Projects = () => {
             <p>Try adjusting your filters or search term.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {projects.map(project => (
               <ProjectCard key={project._id} project={project} />
             ))}

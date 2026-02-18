@@ -5,7 +5,7 @@ const ProjectCard = ({ project }) => {
   const imageUrl = project.image?.trim() || 'https://placehold.co/600x400?text=No+Image';
 
   return (
-    <article className="group card overflow-hidden hover:-translate-y-2 transition-all duration-300 h-full flex flex-col">
+    <article className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 h-full flex flex-col overflow-hidden">
       {/* Image Container */}
       <div className="relative aspect-video overflow-hidden">
         <img 
@@ -14,7 +14,7 @@ const ProjectCard = ({ project }) => {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
           {project.githubUrl && (
             <a 
               href={project.githubUrl} 
@@ -42,7 +42,6 @@ const ProjectCard = ({ project }) => {
 
       {/* Content */}
       <div className="p-5 flex-1 flex flex-col">
-        {/* Title and Category */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white truncate flex-1">
             {project.title}
@@ -52,30 +51,27 @@ const ProjectCard = ({ project }) => {
           </span>
         </div>
 
-        {/* Description */}
         <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-4">
           {project.description}
         </p>
 
-        {/* Tech Badges */}
         <div className="flex flex-wrap gap-2 mb-4">
           {project.technologies?.slice(0, 4).map((tech, idx) => (
             <span 
               key={idx} 
-              className="text-xs px-3 py-1 rounded-full bg-white/30 dark:bg-slate-700/30 border border-white/20 dark:border-slate-600/30 text-slate-700 dark:text-slate-300"
+              className="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300"
             >
               {tech}
             </span>
           ))}
           {project.technologies?.length > 4 && (
-            <span className="text-xs px-3 py-1 rounded-full bg-white/30 dark:bg-slate-700/30 border border-white/20 dark:border-slate-600/30 text-slate-700 dark:text-slate-300">
+            <span className="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
               +{project.technologies.length - 4}
             </span>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-white/20 dark:border-slate-700/30 mt-auto">
+        <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700 mt-auto">
           <div className="flex gap-3 text-xs text-slate-500 dark:text-slate-500">
             <span className="flex items-center gap-1">
               <FaEye /> {project.views || 0}
