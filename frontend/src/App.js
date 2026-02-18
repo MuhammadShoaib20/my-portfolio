@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -46,7 +51,7 @@ function App() {
                 element={
                   <>
                     <Navbar />
-                    <main className="flex-1 container-custom py-8">
+                    <main className="flex-1 w-full">
                       <Outlet />
                     </main>
                     <Footer />
@@ -70,18 +75,102 @@ function App() {
 
               {/* Protected admin routes with AdminLayout */}
               <Route element={<AdminLayout />}>
-                <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/admin/projects" element={<ProtectedRoute><ManageProjects /></ProtectedRoute>} />
-                <Route path="/admin/projects/add" element={<ProtectedRoute><AddProject /></ProtectedRoute>} />
-                <Route path="/admin/projects/edit/:id" element={<ProtectedRoute><EditProject /></ProtectedRoute>} />
-                <Route path="/admin/blogs" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
-                <Route path="/admin/blogs/add" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />
-                <Route path="/admin/blogs/edit/:id" element={<ProtectedRoute><EditBlog /></ProtectedRoute>} />
-                <Route path="/admin/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-                <Route path="/admin/profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-                <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/admin/users" element={<ProtectedRoute requiredRole="superadmin"><AdminManagement /></ProtectedRoute>} />
-                <Route path="/admin/resumes" element={<ProtectedRoute><ResumeManagement /></ProtectedRoute>} />
+                <Route
+                  path="/admin/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/projects"
+                  element={
+                    <ProtectedRoute>
+                      <ManageProjects />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/projects/add"
+                  element={
+                    <ProtectedRoute>
+                      <AddProject />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/projects/edit/:id"
+                  element={
+                    <ProtectedRoute>
+                      <EditProject />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/blogs"
+                  element={
+                    <ProtectedRoute>
+                      <ManageBlogs />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/blogs/add"
+                  element={
+                    <ProtectedRoute>
+                      <AddBlog />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/blogs/edit/:id"
+                  element={
+                    <ProtectedRoute>
+                      <EditBlog />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/messages"
+                  element={
+                    <ProtectedRoute>
+                      <Messages />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/profile"
+                  element={
+                    <ProtectedRoute>
+                      <EditProfile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/users"
+                  element={
+                    <ProtectedRoute requiredRole="superadmin">
+                      <AdminManagement />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/resumes"
+                  element={
+                    <ProtectedRoute>
+                      <ResumeManagement />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
             </Routes>
             <Toaster position="top-right" />
