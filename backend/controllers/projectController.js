@@ -50,9 +50,16 @@ exports.getProjectById = async (req, res) => {
 // @access  Private/Admin
 exports.createProject = async (req, res) => {
   try {
+    // ✅ Attach the authenticated user's ID to the project data
+    req.body.createdBy = req.user._id;
+
     const project = await Project.create(req.body);
     res.status(201).json(project);
   } catch (error) {
+    // Better error handling: send validation errors as 400
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(500).json({ message: error.message });
   }
 };
