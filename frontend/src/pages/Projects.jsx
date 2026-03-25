@@ -1,150 +1,94 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { projectsAPI } from '../utils/api';
 import ProjectCard from '../components/common/ProjectCard';
 import toast from 'react-hot-toast';
-import { FaSearch, FaTimes } from 'react-icons/fa';
 
-const CATEGORIES = ['all', 'Frontend', 'Full Stack', 'Mobile', 'UI/UX'];
+const categories = ['all', 'Frontend', 'Full Stack', 'Mobile', 'UI/UX'];
 
 const Projects = () => {
-  const [projects,    setProjects]    = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [filter,      setFilter]      = useState('all');
-  const [search,      setSearch]      = useState('');
-  const [inputVal,    setInputVal]    = useState('');
-  const inputRef = useRef(null);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
 
-  const fetchProjects = useCallback(async () => {
+  const fetchProjects = useCallback(async (searchTerm = search) => {
     try {
       setLoading(true);
       const params = {};
       if (filter !== 'all') params.category = filter;
-      if (search) params.search = search;
+      if (searchTerm) params.search = searchTerm;
       const res = await projectsAPI.getAll(params);
       setProjects(res.data.projects);
-    } catch {
+    } catch (error) {
       toast.error('Failed to fetch projects');
     } finally {
       setLoading(false);
     }
   }, [filter, search]);
 
-  useEffect(() => { fetchProjects(); }, [fetchProjects]);
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setSearch(inputVal.trim());
+    setSearch(searchInput);
   };
 
-  const clearSearch = () => {
-    setInputVal('');
-    setSearch('');
-    inputRef.current?.focus();
-  };
-
-  const handleFilter = (cat) => {
+  const handleFilterChange = (cat) => {
     setFilter(cat);
     setSearch('');
-    setInputVal('');
+    setSearchInput('');
   };
 
   return (
-    <div className="min-h-screen section-padding w-full overflow-x-hidden">
-      <div className="container-custom">
-
-        {/* ── Header ── */}
-        <header className="text-center mb-8 sm:mb-12">
-          <h1 className="section-heading">Selected Projects</h1>
-          <p className="section-subheading">
+    <div className="min-h-screen py-8 sm:py-12 w-full overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-6 xs:mb-8 sm:mb-12">
+          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
+            Selected Projects
+          </h1>
+          <p className="text-sm xs:text-base sm:text-lg text-slate-600 dark:text-slate-400">
             Explore my recent work and case studies
           </p>
-        </header>
+        </div>
 
-        {/* ── Sticky filter bar ── */}
-        <div
-          className="sticky top-14 sm:top-16 z-40
-                     bg-white/90 dark:bg-slate-900/90 backdrop-blur-md
-                     border-b border-slate-200 dark:border-slate-700
-                     py-3 -mx-4 sm:-mx-6 lg:-mx-8
-                     px-4 sm:px-6 lg:px-8 mb-8"
-        >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-
-            {/* Category pills – horizontal scroll on mobile */}
-            <div
-              className="w-full sm:w-auto overflow-x-auto scrollbar-hide -mx-1 px-1"
-              role="tablist"
-              aria-label="Filter by category"
-            >
-              <div className="flex gap-2 pb-0.5">
-                {CATEGORIES.map(cat => (
+        {/* Sticky Filter Bar */}
+        <div className="sticky top-16 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 py-3 xs:py-4 mb-6 xs:mb-8 -mx-3 xs:-mx-4 sm:mx-0 px-3 xs:px-4 sm:px-0">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 xs:gap-4">
+            {/* Categories - horizontal scroll on mobile */}
+            <div className="w-full overflow-x-auto scrollbar-hide">
+              <div className="flex gap-1 xs:gap-2 pb-1">
+                {categories.map(cat => (
                   <button
                     key={cat}
-                    role="tab"
-                    aria-selected={filter === cat}
-                    onClick={() => handleFilter(cat)}
-                    className={`flex-shrink-0 min-h-[40px] px-4 py-2 rounded-full
-                                text-xs sm:text-sm font-medium whitespace-nowrap
-                                transition-all duration-200
-                                focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1
-                                ${filter === cat
-                                  ? 'bg-primary text-white shadow-md'
-                                  : 'bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-primary hover:text-primary'
-                                }`}
+                    onClick={() => handleFilterChange(cat)}
+                    className={`px-3 xs:px-4 py-1.5 xs:py-2 rounded-full text-xs xs:text-sm font-medium whitespace-nowrap transition flex-shrink-0 ${
+                      filter === cat
+                        ? 'bg-primary text-white'
+                        : 'bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white hover:border-primary'
+                    }`}
                   >
-                    {cat === 'all' ? 'All' : cat}
+                    {cat}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Search */}
-            <form
-              onSubmit={handleSearch}
-              className="flex w-full sm:w-auto gap-2"
-              role="search"
-            >
-              <div className="relative flex-1 sm:w-56 lg:w-64">
-                <FaSearch
-                  size={13}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                  aria-hidden="true"
-                />
-                <input
-                  ref={inputRef}
-                  type="search"
-                  placeholder="Search projects…"
-                  value={inputVal}
-                  onChange={e => setInputVal(e.target.value)}
-                  aria-label="Search projects"
-                  className="w-full min-h-[40px] pl-9 pr-8 py-2 rounded-full
-                             bg-white dark:bg-slate-800
-                             border border-slate-300 dark:border-slate-600
-                             text-slate-900 dark:text-white placeholder-slate-400
-                             text-xs sm:text-sm
-                             focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
-                             transition duration-150"
-                />
-                {inputVal && (
-                  <button
-                    type="button"
-                    onClick={clearSearch}
-                    aria-label="Clear search"
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2
-                               text-slate-400 hover:text-slate-600
-                               min-w-[24px] min-h-[24px] flex items-center justify-center"
-                  >
-                    <FaTimes size={11} />
-                  </button>
-                )}
-              </div>
+            {/* Search Form */}
+            <form onSubmit={handleSearch} className="flex w-full sm:w-auto gap-1 xs:gap-2">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="flex-1 sm:w-64 px-3 xs:px-4 py-1.5 xs:py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-xs xs:text-sm"
+              />
               <button
                 type="submit"
-                className="min-h-[40px] px-4 sm:px-5 py-2
-                           bg-primary text-white rounded-full text-xs sm:text-sm font-medium
-                           hover:bg-primary-dark transition-colors duration-150
-                           focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1
-                           whitespace-nowrap"
+                className="px-3 xs:px-6 py-1.5 xs:py-2 bg-primary text-white rounded-full font-medium hover:bg-primary-dark transition text-xs xs:text-sm whitespace-nowrap"
               >
                 Search
               </button>
@@ -152,39 +96,25 @@ const Projects = () => {
           </div>
         </div>
 
-        {/* ── Grid ── */}
+        {/* Project Grid */}
         {loading ? (
-          <div
-            className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-            aria-label="Loading projects"
-            aria-busy="true"
-          >
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="skeleton h-64 sm:h-72 lg:h-80" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-56 xs:h-64 sm:h-80 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse"></div>
             ))}
           </div>
         ) : projects.length === 0 ? (
-          <div className="text-center py-16 sm:py-24">
-            <p className="text-fluid-lg font-semibold text-slate-600 dark:text-slate-400 mb-2">
-              No projects found
-            </p>
-            <p className="text-slate-500 dark:text-slate-500 text-sm">
-              Try adjusting your filters or search term.
-            </p>
+          <div className="text-center py-16 xs:py-20 text-slate-500 dark:text-slate-500">
+            <h3 className="text-lg xs:text-xl font-semibold mb-2">No projects found</h3>
+            <p>Try adjusting your filters or search term.</p>
           </div>
         ) : (
-          <ul
-            className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-            aria-label={`${projects.length} projects`}
-          >
-            {projects.map((project, idx) => (
-              <li key={project._id} className="animate-fade-up" style={{ animationDelay: `${idx * 50}ms` }}>
-                <ProjectCard project={project} />
-              </li>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-6">
+            {projects.map(project => (
+              <ProjectCard key={project._id} project={project} />
             ))}
-          </ul>
+          </div>
         )}
-
       </div>
     </div>
   );

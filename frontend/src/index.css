@@ -2,222 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =============================================
-   BASE RESET & OVERFLOW GUARD
-   ============================================= */
 @layer base {
-  *, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  html {
-    overflow-y: scroll;              /* prevents layout shift */
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;  /* prevent iOS font inflation */
-    text-size-adjust: 100%;
-  }
-
   body {
-    @apply antialiased overflow-x-hidden;
-    min-height: 100dvh;              /* dynamic viewport height */
+    @apply antialiased;
   }
-
-  #root, .App {
-    overflow-x: hidden;
-    position: relative;
+  h1 {
+    @apply text-4xl md:text-5xl font-bold tracking-tight;
   }
-
-  /* Responsive media defaults */
-  img, video, iframe, embed, object {
-    max-width: 100%;
-    height: auto;
-    display: block;
+  h2 {
+    @apply text-3xl md:text-4xl font-semibold;
   }
-
-  /* Word-break guard */
-  h1, h2, h3, h4, h5, h6, p, span, a, li, td, th {
-    word-break: break-word;
-    overflow-wrap: break-word;
+  h3 {
+    @apply text-2xl font-semibold;
   }
-
-  /* Focus-visible ring (keyboard nav) */
-  :focus-visible {
-    @apply outline-2 outline-offset-2 outline-primary rounded-sm;
-  }
-
-  /* Base heading scale (fluid) */
-  h1 { @apply text-fluid-5xl font-bold tracking-tight; }
-  h2 { @apply text-fluid-4xl font-semibold; }
-  h3 { @apply text-fluid-2xl font-semibold; }
-
-  body { @apply text-fluid-base; }
 }
 
-/* =============================================
-   COMPONENT LAYER
-   ============================================= */
 @layer components {
-
-  /* ---- Layout ---- */
   .container-custom {
-    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
-  /* ---- Buttons (min 44px touch target) ---- */
   .btn-primary {
-    @apply inline-flex items-center justify-center
-           min-h-[44px] min-w-[44px]
-           px-5 py-2.5 sm:px-6 sm:py-3
-           bg-primary text-white rounded-full
-           font-semibold text-sm sm:text-base
-           hover:bg-primary-dark
-           active:scale-95
-           transform hover:-translate-y-0.5
-           transition-all duration-200
-           shadow-md hover:shadow-lg
-           focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-full font-semibold hover:bg-primary-dark transform hover:-translate-y-0.5 transition-all shadow-lg hover:shadow-xl;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center
-           min-h-[44px] min-w-[44px]
-           px-5 py-2.5 sm:px-6 sm:py-3
-           bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm
-           border border-white/20 dark:border-slate-700/30
-           text-primary rounded-full
-           font-semibold text-sm sm:text-base
-           hover:bg-primary hover:text-white
-           active:scale-95
-           transform hover:-translate-y-0.5
-           transition-all duration-200
-           focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 text-primary rounded-full font-semibold hover:bg-primary hover:text-white transform hover:-translate-y-0.5 transition-all;
   }
 
-  /* ---- Cards ---- */
-  .card {
-    @apply backdrop-blur-md
-           bg-white/30 dark:bg-slate-800/30
-           border border-white/20 dark:border-slate-700/30
-           rounded-2xl shadow-lg;
-  }
-
-  .card-solid {
-    @apply bg-white dark:bg-slate-800
-           border border-slate-200 dark:border-slate-700
-           rounded-xl shadow-sm;
-  }
-
-  /* ---- Social icons ---- */
   .social-icon {
-    @apply w-11 h-11 rounded-full
-           bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm
-           border border-white/20 dark:border-slate-700/30
-           flex items-center justify-center
-           text-slate-600 dark:text-slate-300
-           hover:bg-primary hover:text-white
-           hover:-translate-y-1
-           transition-all duration-200
-           focus-visible:ring-2 focus-visible:ring-primary;
+    @apply w-10 h-10 rounded-full bg-white/30 dark:bg-slate-800/30 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-primary hover:text-white hover:-translate-y-1 transition-all;
   }
 
-  /* ---- Form inputs ---- */
-  .input-base {
-    @apply w-full min-h-[44px]
-           px-4 py-2.5
-           border border-slate-300 dark:border-slate-600
-           rounded-lg
-           bg-white dark:bg-slate-700
-           text-slate-900 dark:text-white
-           placeholder-slate-400 dark:placeholder-slate-500
-           text-sm sm:text-base
-           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
-           transition duration-150
-           disabled:opacity-60 disabled:cursor-not-allowed;
-  }
-
-  .textarea-base {
-    @apply input-base resize-y;
-    min-height: 120px;
-  }
-
-  /* ---- Section headings ---- */
-  .section-heading {
-    @apply text-fluid-4xl font-bold mb-3;
-  }
-
-  .section-subheading {
-    @apply text-fluid-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto;
-  }
-
-  /* ---- Skeleton loader ---- */
-  .skeleton {
-    @apply animate-pulse rounded-2xl
-           bg-slate-200 dark:bg-slate-700;
-  }
-
-  /* ---- Tag / badge ---- */
-  .tag {
-    @apply inline-flex items-center
-           px-3 py-1 rounded-full
-           text-xs sm:text-sm font-medium
-           bg-primary/10 text-primary;
-  }
-
-  /* ---- Scrollbar hide ---- */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar { display: none; }
-
-  /* ---- Spinner ---- */
-  .spinner {
-    @apply w-10 h-10 sm:w-12 sm:h-12
-           border-4 border-primary border-t-transparent
-           rounded-full animate-spin;
+  .card {
+    @apply backdrop-blur-md bg-white/30 dark:bg-slate-800/30 border border-white/20 dark:border-slate-700/30 rounded-2xl shadow-lg;
   }
 }
-
-/* =============================================
-   UTILITY LAYER
-   ============================================= */
-@layer utilities {
-  /* Line-clamp polyfill */
-  .line-clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* Safe-area padding for notched phones */
-  .pb-safe  { padding-bottom: env(safe-area-inset-bottom, 0px); }
-  .pt-safe  { padding-top:    env(safe-area-inset-top,    0px); }
-
-  /* Animation delay utilities */
-  .delay-100 { animation-delay: 100ms; }
-  .delay-200 { animation-delay: 200ms; }
-  .delay-300 { animation-delay: 300ms; }
-  .delay-400 { animation-delay: 400ms; }
-  .delay-500 { animation-delay: 500ms; }
-
-  /* Full-bleed section helper */
-  .section-padding {
-    @apply py-12 sm:py-16 lg:py-20;
-  }
+/* Force vertical scrollbar to always be visible – prevents layout shift */
+html {
+  overflow-y: scroll;
 }
