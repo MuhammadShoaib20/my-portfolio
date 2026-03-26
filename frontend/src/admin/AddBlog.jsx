@@ -4,6 +4,8 @@ import { blogsAPI } from '../utils/api';
 import toast from 'react-hot-toast';
 import { FaSave, FaTimes } from 'react-icons/fa';
 import ImageUploader from '../components/common/ImageUploader';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Quill styles
 
 const AddBlog = () => {
   const navigate = useNavigate();
@@ -39,6 +41,11 @@ const AddBlog = () => {
     setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
+  // Handle Quill content change
+  const handleContentChange = (value) => {
+    setFormData((prev) => ({ ...prev, content: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title || !formData.excerpt || !formData.content) {
@@ -56,6 +63,17 @@ const AddBlog = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Quill toolbar configuration
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+      ['link', 'image', 'code-block'],
+      ['clean']
+    ],
   };
 
   return (
@@ -83,11 +101,17 @@ const AddBlog = () => {
           <p className="text-xs text-right text-slate-500 mt-1">{formData.excerpt.length}/300</p>
         </div>
 
-        {/* Content */}
+        {/* Content - Rich Text Editor */}
         <div>
           <label className="block text-sm font-medium mb-1">Blog Content *</label>
-          <textarea name="content" value={formData.content} onChange={handleChange} rows="15" required disabled={loading}
-            className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+          <ReactQuill
+            theme="snow"
+            value={formData.content}
+            onChange={handleContentChange}
+            modules={modules}
+            className="bg-white dark:bg-slate-700 text-slate-900 dark:text-white rounded-lg"
+            style={{ height: '400px', marginBottom: '50px' }}
+            readOnly={loading}
           />
         </div>
 
