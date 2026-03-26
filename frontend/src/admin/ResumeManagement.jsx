@@ -10,7 +10,6 @@ const ResumeManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [resetKey, setResetKey] = useState(0); // increment to reset uploader
   const [formData, setFormData] = useState({
     title: '',
     fileUrl: '',
@@ -18,6 +17,7 @@ const ResumeManagement = () => {
     fileSize: 0,
     isActive: true,
   });
+  const [uploaderKey, setUploaderKey] = useState(0); // force reset FileUploader
 
   useEffect(() => {
     fetchResumes();
@@ -43,17 +43,20 @@ const ResumeManagement = () => {
     }));
   };
 
+  // ✅ File upload callback – now receives clean fileType from backend
   const handleFileUpload = (url, fileType, fileSize) => {
+    console.log('File uploaded:', { url, fileType, fileSize }); // debug
     setFormData(prev => ({
       ...prev,
       fileUrl: url,
-      fileType: fileType || 'pdf',
+      fileType,        // already 'pdf', 'doc', or 'docx'
       fileSize,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Submitting with formData:', formData); // debug
     if (!formData.title || !formData.fileUrl) {
       toast.error('Please provide a title and upload a file');
       return;
@@ -66,18 +69,15 @@ const ResumeManagement = () => {
         await resumeAPI.create(formData);
         toast.success('Resume added');
       }
-      closeModal();
+      // Close modal and reset state
+      setShowModal(false);
+      setEditing(null);
+      setFormData({ title: '', fileUrl: '', fileType: 'pdf', fileSize: 0, isActive: true });
+      setUploaderKey(prev => prev + 1); // fresh FileUploader next time
       fetchResumes();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Operation failed');
     }
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setEditing(null);
-    setFormData({ title: '', fileUrl: '', fileType: 'pdf', fileSize: 0, isActive: true });
-    setResetKey(prev => prev + 1); // reset uploader for next open
   };
 
   const handleDelete = async (id, title) => {
@@ -110,15 +110,15 @@ const ResumeManagement = () => {
       fileSize: resume.fileSize,
       isActive: resume.isActive,
     });
-    // Do NOT increment resetKey here — we want to keep the existing file shown
     setShowModal(true);
+    setUploaderKey(prev => prev + 1); // fresh FileUploader for edit
   };
 
   const openAddModal = () => {
     setEditing(null);
     setFormData({ title: '', fileUrl: '', fileType: 'pdf', fileSize: 0, isActive: true });
-    setResetKey(prev => prev + 1); // ensure clean state for new upload
     setShowModal(true);
+    setUploaderKey(prev => prev + 1); // fresh FileUploader for add
   };
 
   const formatFileSize = (bytes) => {
@@ -145,9 +145,7 @@ const ResumeManagement = () => {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">Manage Resumes</h1>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">
-            Add, edit, and enable/disable resume downloads
-          </p>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">Add, edit, and enable/disable resume downloads</p>
         </div>
         <button onClick={openAddModal} className="btn-primary text-sm sm:text-base">
           <FaPlus className="mr-2" /> Add Resume
@@ -167,7 +165,9 @@ const ResumeManagement = () => {
           {resumes.map((resume) => (
             <div key={resume._id} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm p-4">
               <div className="flex items-start gap-3">
-                <div className="text-2xl">{getFileIcon(resume.fileType)}</div>
+                <div className="text-2xl">
+                  {getFileIcon(resume.fileType)}
+                </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-slate-900 dark:text-white truncate">{resume.title}</h3>
                   <p className="text-xs text-slate-500 dark:text-slate-500">
@@ -208,14 +208,8 @@ const ResumeManagement = () => {
 
       {/* Modal for Add/Edit */}
       {showModal && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={closeModal}
-        >
-          <div
-            className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 max-w-lg w-full"
-            onClick={e => e.stopPropagation()}
-          >
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 max-w-lg w-full" onClick={e => e.stopPropagation()}>
             <h2 className="text-xl font-bold mb-4">{editing ? 'Edit Resume' : 'Add New Resume'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -233,7 +227,7 @@ const ResumeManagement = () => {
               <div>
                 <label className="block text-sm font-medium mb-1">Upload File * (PDF, DOC, DOCX)</label>
                 <FileUploader
-                  resetKey={resetKey}
+                  key={uploaderKey}              // forces a fresh instance
                   currentFile={editing ? formData.fileUrl : ''}
                   onFileUpload={handleFileUpload}
                   accept=".pdf,.doc,.docx"
@@ -257,7 +251,7 @@ const ResumeManagement = () => {
                 <button type="submit" className="btn-primary flex-1">
                   {editing ? 'Update' : 'Create'}
                 </button>
-                <button type="button" onClick={closeModal} className="btn-outline flex-1">
+                <button type="button" onClick={() => setShowModal(false)} className="btn-outline flex-1">
                   Cancel
                 </button>
               </div>

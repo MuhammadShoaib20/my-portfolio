@@ -7,6 +7,20 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Map MIME types to clean enum values matching your MongoDB schema
+const getMimeTypeLabel = (mimeType) => {
+  switch (mimeType) {
+    case 'application/pdf':
+      return 'pdf';
+    case 'application/msword':
+      return 'doc';
+    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+      return 'docx';
+    default:
+      return 'pdf'; // fallback
+  }
+};
+
 const uploadFile = async (req, res) => {
   try {
     const { image } = req.body;
@@ -18,7 +32,6 @@ const uploadFile = async (req, res) => {
     console.log('Received image length:', image.length);
     console.log('First 100 chars:', image.substring(0, 100));
 
-    // Fixed regex: added \. to support MIME types with dots (e.g. .docx, .xlsx)
     const matches = image.match(/^data:([A-Za-z0-9\-+\/\.]+);base64,(.+)$/);
 
     if (!matches) {
@@ -31,13 +44,8 @@ const uploadFile = async (req, res) => {
 
     const isPDF = mimeType === 'application/pdf';
     const isImage = mimeType.startsWith('image/');
-    const isDocx =
-      mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    const isDocx = mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     const isDoc = mimeType === 'application/msword';
-    const isXlsx =
-      mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    const isPptx =
-      mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
 
     let uploadOptions = {
       folder: 'portfolio/resumes',
@@ -49,8 +57,7 @@ const uploadFile = async (req, res) => {
       uploadOptions.format = 'pdf';
     } else if (isImage) {
       uploadOptions.resource_type = 'image';
-    } else if (isDocx || isDoc || isXlsx || isPptx) {
-      // Office documents must be uploaded as 'raw' on Cloudinary
+    } else if (isDocx || isDoc) {
       uploadOptions.resource_type = 'raw';
     } else {
       uploadOptions.resource_type = 'raw';
@@ -62,10 +69,13 @@ const uploadFile = async (req, res) => {
 
     console.log('Upload successful:', result.secure_url);
 
+    // Return clean fileType label instead of raw MIME type
+    const fileTypeLabel = getMimeTypeLabel(mimeType);
+
     res.status(200).json({
       success: true,
       url: result.secure_url,
-      fileType: result.format || mimeType,
+      fileType: fileTypeLabel,   // ✅ 'pdf' | 'doc' | 'docx'
       fileSize: result.bytes,
       resourceType: result.resource_type,
     });
