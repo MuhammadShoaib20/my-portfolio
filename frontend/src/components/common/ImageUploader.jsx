@@ -1,3 +1,4 @@
+// frontend/src/components/common/ImageUploader.jsx
 import { useState } from 'react';
 import { FaUpload, FaTimes, FaSpinner } from 'react-icons/fa';
 import api from '../../utils/api';
