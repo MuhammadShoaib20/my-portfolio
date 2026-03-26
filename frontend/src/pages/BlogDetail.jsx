@@ -4,6 +4,7 @@ import { blogsAPI } from '../utils/api';
 import toast from 'react-hot-toast';
 import { format, isValid } from 'date-fns';
 import { FaCalendar, FaClock, FaHeart, FaArrowLeft, FaUser, FaTwitter, FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
+import DOMPurify from 'dompurify'; // optional but recommended
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -41,6 +42,12 @@ const BlogDetail = () => {
     if (!blog?.publishedAt) return 'No date';
     const date = new Date(blog.publishedAt);
     return isValid(date) ? format(date, 'MMMM dd, yyyy') : 'Invalid date';
+  };
+
+  // Sanitize HTML content to prevent XSS
+  const sanitizedContent = () => {
+    if (!blog?.content) return '';
+    return DOMPurify.sanitize(blog.content);
   };
 
   if (loading) {
@@ -94,9 +101,11 @@ const BlogDetail = () => {
             </figure>
           )}
 
-          <div className="prose dark:prose-invert max-w-none card p-6 sm:p-8">
-            {blog.content.split('\n').map((para, idx) => para.trim() && <p key={idx}>{para}</p>)}
-          </div>
+          {/* Content with HTML rendering */}
+          <div
+            className="prose dark:prose-invert max-w-none card p-6 sm:p-8"
+            dangerouslySetInnerHTML={{ __html: sanitizedContent() }}
+          />
 
           <footer className="flex flex-wrap items-center justify-between gap-4 card p-6">
             <button onClick={handleLike} className="btn-outline flex items-center gap-2">
