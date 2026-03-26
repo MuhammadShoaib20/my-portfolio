@@ -1,4 +1,3 @@
-// frontend/src/components/common/ImageUploader.jsx
 import { useState } from 'react';
 import { FaUpload, FaTimes, FaSpinner } from 'react-icons/fa';
 import api from '../../utils/api';
@@ -26,7 +25,6 @@ const ImageUploader = ({ onImageUpload, currentImage }) => {
       setUploading(true);
       const base64 = await convertToBase64(file);
       setPreview(base64);
-
       const response = await api.post('/upload', { image: base64 });
       onImageUpload(response.data.url);
       toast.success('Image uploaded successfully!');

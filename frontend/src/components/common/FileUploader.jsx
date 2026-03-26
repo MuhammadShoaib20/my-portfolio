@@ -1,4 +1,3 @@
-// frontend/src/components/common/FileUploader.jsx
 import { useState } from 'react';
 import { FaUpload, FaTimes, FaSpinner, FaFilePdf, FaFileWord } from 'react-icons/fa';
 import api from '../../utils/api';
@@ -28,7 +27,6 @@ const FileUploader = ({ onFileUpload, currentFile, accept = '.pdf,.doc,.docx', m
     try {
       setUploading(true);
       const base64 = await convertToBase64(file);
-
       const response = await api.post('/upload', { image: base64 });
       const { url, fileType, fileSize } = response.data;
       setFileInfo({ url, name: file.name, size: fileSize, type: fileType });
