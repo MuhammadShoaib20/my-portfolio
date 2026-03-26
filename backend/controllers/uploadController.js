@@ -1,4 +1,3 @@
-// backend/controllers/uploadController.js
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -10,16 +9,11 @@ cloudinary.config({
 const uploadFile = async (req, res) => {
   try {
     const { image } = req.body;
-    if (!image) {
-      return res.status(400).json({ message: 'No file data' });
-    }
+    if (!image) return res.status(400).json({ message: 'No file data' });
 
-    // More permissive regex: captures any MIME type (everything before ;base64,)
+    // 🔁 FIXED: Capture any characters before ;base64,
     const matches = image.match(/^data:([^;]+);base64,(.+)$/);
-    if (!matches) {
-      console.error('Invalid base64 format');
-      return res.status(400).json({ message: 'Invalid file data' });
-    }
+    if (!matches) return res.status(400).json({ message: 'Invalid file data' });
 
     const mimeType = matches[1];
     const isPDF = mimeType === 'application/pdf';
@@ -32,13 +26,14 @@ const uploadFile = async (req, res) => {
       type: 'upload',
     };
 
-    // Determine Cloudinary resource type and format
     if (isPDF) {
       uploadOptions.resource_type = 'image';
       uploadOptions.format = 'pdf';
     } else if (isDoc || isDocx) {
-      uploadOptions.resource_type = 'raw'; // treat as raw file
-      uploadOptions.format = isDoc ? 'doc' : 'docx';
+      // Documents: use raw resource type and set format accordingly
+      uploadOptions.resource_type = 'raw';
+      if (isDoc) uploadOptions.format = 'doc';
+      if (isDocx) uploadOptions.format = 'docx';
     } else if (isImage) {
       uploadOptions.resource_type = 'image';
     } else {
@@ -47,7 +42,7 @@ const uploadFile = async (req, res) => {
 
     const result = await cloudinary.uploader.upload(image, uploadOptions);
 
-    // Determine the file type string for storage
+    // Determine the correct fileType for the response
     let fileType = result.format;
     if (isDoc) fileType = 'doc';
     if (isDocx) fileType = 'docx';
