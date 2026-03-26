@@ -32,7 +32,7 @@ const uploadFile = async (req, res) => {
     console.log('Received image length:', image.length);
     console.log('First 100 chars:', image.substring(0, 100));
 
-    const matches = image.match(/^data:([A-Za-z0-9\-+\/\.]+);base64,(.+)$/);
+    const matches = image.match(/^data:([A-Za-z0-9+/]+);base64,(.+)$/);
 
     if (!matches) {
       console.error('Invalid base64 format');
