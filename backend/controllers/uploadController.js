@@ -1,3 +1,4 @@
+// backend/controllers/uploadController.js
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -9,10 +10,19 @@ cloudinary.config({
 const uploadFile = async (req, res) => {
   try {
     const { image } = req.body;
-    if (!image) return res.status(400).json({ message: 'No file data' });
+    if (!image) {
+      return res.status(400).json({ message: 'No file data' });
+    }
+
+    // Debug log
+    console.log('Received image length:', image.length);
+    console.log('First 100 chars:', image.substring(0, 100));
 
     const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    if (!matches) return res.status(400).json({ message: 'Invalid file data' });
+    if (!matches) {
+      console.error('Invalid base64 format');
+      return res.status(400).json({ message: 'Invalid file data' });
+    }
 
     const mimeType = matches[1];
     const isPDF = mimeType === 'application/pdf';

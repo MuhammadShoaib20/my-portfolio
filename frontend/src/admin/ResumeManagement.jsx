@@ -1,3 +1,4 @@
+// frontend/src/admin/ResumeManagement.jsx
 import { useState, useEffect } from 'react';
 import { resumeAPI } from '../utils/api';
 import toast from 'react-hot-toast';
@@ -9,6 +10,7 @@ const ResumeManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [resetUploader, setResetUploader] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     fileUrl: '',
@@ -45,7 +47,7 @@ const ResumeManagement = () => {
     setFormData(prev => ({
       ...prev,
       fileUrl: url,
-      fileType: fileType === 'image' ? 'pdf' : fileType, // crude, but will work
+      fileType: fileType === 'image' ? 'pdf' : fileType,
       fileSize,
     }));
   };
@@ -67,6 +69,7 @@ const ResumeManagement = () => {
       setShowModal(false);
       setEditing(null);
       setFormData({ title: '', fileUrl: '', fileType: 'pdf', fileSize: 0, isActive: true });
+      setResetUploader(prev => !prev); // force reset
       fetchResumes();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Operation failed');
@@ -103,6 +106,14 @@ const ResumeManagement = () => {
       fileSize: resume.fileSize,
       isActive: resume.isActive,
     });
+    setResetUploader(prev => !prev);
+    setShowModal(true);
+  };
+
+  const openAddModal = () => {
+    setEditing(null);
+    setFormData({ title: '', fileUrl: '', fileType: 'pdf', fileSize: 0, isActive: true });
+    setResetUploader(prev => !prev);
     setShowModal(true);
   };
 
@@ -132,14 +143,7 @@ const ResumeManagement = () => {
           <h1 className="text-2xl sm:text-3xl font-bold">Manage Resumes</h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">Add, edit, and enable/disable resume downloads</p>
         </div>
-        <button
-          onClick={() => {
-            setEditing(null);
-            setFormData({ title: '', fileUrl: '', fileType: 'pdf', fileSize: 0, isActive: true });
-            setShowModal(true);
-          }}
-          className="btn-primary text-sm sm:text-base"
-        >
+        <button onClick={openAddModal} className="btn-primary text-sm sm:text-base">
           <FaPlus className="mr-2" /> Add Resume
         </button>
       </div>
@@ -148,7 +152,7 @@ const ResumeManagement = () => {
         <div className="text-center py-12 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
           <h3 className="text-xl font-semibold mb-2">No resumes yet</h3>
           <p className="text-slate-600 dark:text-slate-400 mb-4">Add your first resume to enable downloads.</p>
-          <button onClick={() => setShowModal(true)} className="btn-primary inline-flex">
+          <button onClick={openAddModal} className="btn-primary inline-flex">
             <FaPlus className="mr-2" /> Add Resume
           </button>
         </div>
@@ -219,6 +223,8 @@ const ResumeManagement = () => {
               <div>
                 <label className="block text-sm font-medium mb-1">Upload File * (PDF, DOC, DOCX)</label>
                 <FileUploader
+                  key={resetUploader ? 'reset' : 'initial'}
+                  reset={resetUploader}
                   currentFile={editing ? formData.fileUrl : ''}
                   onFileUpload={handleFileUpload}
                   accept=".pdf,.doc,.docx"

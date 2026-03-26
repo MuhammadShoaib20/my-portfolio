@@ -1,11 +1,24 @@
-import { useState } from 'react';
+// frontend/src/components/common/FileUploader.jsx
+import { useState, useEffect } from 'react';
 import { FaUpload, FaTimes, FaSpinner, FaFilePdf, FaFileWord } from 'react-icons/fa';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 
-const FileUploader = ({ onFileUpload, currentFile, accept = '.pdf,.doc,.docx', maxSize = 10 * 1024 * 1024 }) => {
+const FileUploader = ({ onFileUpload, currentFile, accept = '.pdf,.doc,.docx', maxSize = 10 * 1024 * 1024, reset }) => {
   const [uploading, setUploading] = useState(false);
-  const [fileInfo, setFileInfo] = useState(currentFile ? { url: currentFile, name: 'Current file' } : null);
+  const [fileInfo, setFileInfo] = useState(null);
+
+  // Reset internal state when reset prop changes or currentFile changes
+  useEffect(() => {
+    if (reset) {
+      setFileInfo(null);
+      onFileUpload('', '', 0);
+    } else if (currentFile) {
+      setFileInfo({ url: currentFile, name: 'Current file' });
+    } else {
+      setFileInfo(null);
+    }
+  }, [reset, currentFile, onFileUpload]);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -27,6 +40,12 @@ const FileUploader = ({ onFileUpload, currentFile, accept = '.pdf,.doc,.docx', m
     try {
       setUploading(true);
       const base64 = await convertToBase64(file);
+
+      // Validate base64 format
+      if (!base64.startsWith('data:')) {
+        throw new Error('Invalid file data');
+      }
+
       const response = await api.post('/upload', { image: base64 });
       const { url, fileType, fileSize } = response.data;
       setFileInfo({ url, name: file.name, size: fileSize, type: fileType });
@@ -34,6 +53,8 @@ const FileUploader = ({ onFileUpload, currentFile, accept = '.pdf,.doc,.docx', m
       toast.success('File uploaded successfully!');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to upload file');
+      setFileInfo(null);
+      onFileUpload('', '', 0);
     } finally {
       setUploading(false);
     }
