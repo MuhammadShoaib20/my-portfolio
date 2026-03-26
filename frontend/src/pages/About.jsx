@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { profileAPI } from '../utils/api';
 import ResumeDownloadButton from '../components/common/ResumeDownloadButton';
-import { FaGraduationCap, FaBriefcase, FaAward, FaHeart } from 'react-icons/fa';
+import { FaGraduationCap, FaBriefcase, FaAward, FaCode, FaHeart } from 'react-icons/fa';
+
 
 const About = () => {
   const [profile, setProfile] = useState(null);
@@ -77,29 +78,53 @@ const About = () => {
         </div>
 
         {/* Timeline */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-12">My Journey</h2>
-          <div className="space-y-8">
-            {[
-              { icon: FaGraduationCap, title: 'Education', date: '2018 – 2022', role: 'Bachelor\'s in Computer Science', desc: 'Learned fundamental programming concepts, data structures, algorithms, and web development.' },
-              { icon: FaBriefcase, title: 'First Job', date: '2022 – 2023', role: 'Junior Full Stack Developer', desc: 'Started my professional journey, working on real-world projects and learning industry best practices.' },
-              { icon: FaBriefcase, title: 'Career Growth', date: '2023 – Present', role: 'Senior Full Stack Developer', desc: 'Leading development teams, architecting scalable solutions, and mentoring junior developers.' },
-              { icon: FaAward, title: 'Achievements', date: 'Ongoing', role: 'Continuous Learning & Growth', desc: 'Building side projects, contributing to open source, and staying updated with latest technologies.' },
-            ].map((item, idx) => (
-              <div key={idx} className="flex flex-col sm:flex-row gap-4 sm:gap-8">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                  <item.icon size={24} />
-                </div>
-                <div className="flex-1 card p-6">
-                  <h3 className="text-xl font-semibold mb-1">{item.title}</h3>
-                  <p className="text-sm text-primary mb-2">{item.date}</p>
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{item.role}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+  <div className="mb-16">
+  <h2 className="text-3xl font-bold text-center mb-12">My Journey</h2>
+  <div className="space-y-8">
+    {[
+      { 
+        icon: FaGraduationCap, 
+        title: 'Education', 
+        date: '2024 – Present', 
+        role: 'BS Computer Science', 
+        desc: '5th semester at Iqra University, Karachi. Coursework: Web Development, Databases, Software Engineering. Active in programming projects and open source.' 
+      },
+      { 
+        icon: FaBriefcase, 
+        title: 'Freelance Full‑Stack Developer', 
+        date: '2023 – Present', 
+        role: 'MERN Stack Specialist', 
+        desc: 'Building and deploying full‑stack web applications for clients. Specialising in e‑commerce, real‑time chat, and custom admin panels with MERN, Tailwind, and cloud services.' 
+      },
+      { 
+        icon: FaCode, 
+        title: 'Portfolio Projects', 
+        date: '2024 – Present', 
+        role: '3 Featured MERN Projects', 
+        desc: 'Developed ShopHub (e‑commerce), SyncChat (real‑time chat), and this portfolio. Each project showcases modern features: payments, WebSockets, admin panels, and responsive design.' 
+      },
+      { 
+        icon: FaAward, 
+        title: 'Achievements', 
+        date: 'Ongoing', 
+        role: '170+ GitHub Contributions', 
+        desc: 'Active open source contributor. Regularly maintain repositories with clear READMEs, API docs, and live demos. Continuously learning new technologies and improving code quality.' 
+      },
+    ].map((item, idx) => (
+      <div key={idx} className="flex flex-col sm:flex-row gap-4 sm:gap-8">
+        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+          <item.icon size={24} />
         </div>
+        <div className="flex-1 card p-6">
+          <h3 className="text-xl font-semibold mb-1">{item.title}</h3>
+          <p className="text-sm text-primary mb-2">{item.date}</p>
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{item.role}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">{item.desc}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
         {/* Values */}
         <div>
