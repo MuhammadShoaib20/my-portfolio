@@ -18,8 +18,7 @@ const uploadFile = async (req, res) => {
     console.log('Received image length:', image.length);
     console.log('First 100 chars:', image.substring(0, 100));
 
-    // ✅ UPDATED: more permissive regex to capture any MIME type
-    const matches = image.match(/^data:([^;]+);base64,(.+)$/);
+    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
     if (!matches) {
       console.error('Invalid base64 format');
       return res.status(400).json({ message: 'Invalid file data' });
@@ -27,8 +26,6 @@ const uploadFile = async (req, res) => {
 
     const mimeType = matches[1];
     const isPDF = mimeType === 'application/pdf';
-    const isDoc = mimeType === 'application/msword';
-    const isDocx = mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     const isImage = mimeType.startsWith('image/');
 
     let uploadOptions = {
@@ -39,10 +36,6 @@ const uploadFile = async (req, res) => {
     if (isPDF) {
       uploadOptions.resource_type = 'image';
       uploadOptions.format = 'pdf';
-    } else if (isDoc || isDocx) {
-      uploadOptions.resource_type = 'raw';
-      if (isDoc) uploadOptions.format = 'doc';
-      if (isDocx) uploadOptions.format = 'docx';
     } else if (isImage) {
       uploadOptions.resource_type = 'image';
     } else {
@@ -51,15 +44,10 @@ const uploadFile = async (req, res) => {
 
     const result = await cloudinary.uploader.upload(image, uploadOptions);
 
-    // Determine the correct fileType for the response
-    let fileType = result.format;
-    if (isDoc) fileType = 'doc';
-    if (isDocx) fileType = 'docx';
-
     res.status(200).json({
       success: true,
       url: result.secure_url,
-      fileType: fileType,
+      fileType: result.format,
       fileSize: result.bytes,
     });
   } catch (error) {
