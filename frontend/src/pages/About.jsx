@@ -62,7 +62,7 @@ const About = () => {
           {[
             { label: 'Years Experience', value: '3+' },
             { label: 'Projects Completed', value: '3+' },
-            { label: 'Happy Clients', value: '30+' },
+            { label: 'Happy Clients', value: '100%' },
             { label: 'Satisfaction', value: '100%' },
           ].map((stat, idx) => (
             <div key={idx} className="text-center p-6 card">
