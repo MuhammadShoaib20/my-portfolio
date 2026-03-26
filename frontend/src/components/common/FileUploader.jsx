@@ -1,37 +1,46 @@
 // frontend/src/components/common/FileUploader.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FaUpload, FaTimes, FaSpinner, FaFilePdf, FaFileWord } from 'react-icons/fa';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 
-const FileUploader = ({ onFileUpload, currentFile, accept = '.pdf,.doc,.docx', maxSize = 10 * 1024 * 1024, reset }) => {
+const FileUploader = ({ onFileUpload, currentFile, accept = '.pdf,.doc,.docx', maxSize = 10 * 1024 * 1024, resetKey }) => {
   const [uploading, setUploading] = useState(false);
   const [fileInfo, setFileInfo] = useState(null);
+  const isFirstMount = useRef(true);
 
-  // Reset internal state when reset prop changes or currentFile changes
+  // Initialize with currentFile on mount
   useEffect(() => {
-    if (reset) {
-      setFileInfo(null);
-      onFileUpload('', '', 0);
-    } else if (currentFile) {
+    if (currentFile) {
       setFileInfo({ url: currentFile, name: 'Current file' });
     } else {
       setFileInfo(null);
     }
-  }, [reset, currentFile, onFileUpload]);
+  }, [currentFile]); // update when currentFile changes
+
+  // Reset when resetKey changes (but not on first mount)
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+    setFileInfo(null);
+  }, [resetKey]);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
     if (!allowedTypes.includes(file.type)) {
       toast.error('Please select a PDF or DOC/DOCX file');
       return;
     }
 
-    // Validate file size
     if (file.size > maxSize) {
       toast.error(`File size should be less than ${maxSize / 1024 / 1024}MB`);
       return;
@@ -41,13 +50,13 @@ const FileUploader = ({ onFileUpload, currentFile, accept = '.pdf,.doc,.docx', m
       setUploading(true);
       const base64 = await convertToBase64(file);
 
-      // Validate base64 format
       if (!base64.startsWith('data:')) {
         throw new Error('Invalid file data');
       }
 
       const response = await api.post('/upload', { image: base64 });
       const { url, fileType, fileSize } = response.data;
+
       setFileInfo({ url, name: file.name, size: fileSize, type: fileType });
       onFileUpload(url, fileType, fileSize);
       toast.success('File uploaded successfully!');
