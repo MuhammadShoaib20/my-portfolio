@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { contactAPI } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import { FaEnvelope, FaEnvelopeOpen, FaTrash, FaCheck } from 'react-icons/fa';
 
 const Messages = () => {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'superadmin';
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -32,7 +35,7 @@ const Messages = () => {
     if (message.status === 'unread') {
       try {
         await contactAPI.updateStatus(message._id, 'read');
-        fetchMessages(); // re-fetch to update unread count
+        fetchMessages();
       } catch (error) {
         console.error('Failed to mark as read');
       }
@@ -142,22 +145,24 @@ const Messages = () => {
             <div className="space-y-4">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <h2 className="text-xl font-semibold text-slate-900 dark:text-white">{selectedMessage.subject}</h2>
-                <div className="flex gap-2">
-                  {selectedMessage.status !== 'replied' && (
+                {isSuperAdmin && (
+                  <div className="flex gap-2">
+                    {selectedMessage.status !== 'replied' && (
+                      <button
+                        onClick={() => handleMarkAsReplied(selectedMessage._id)}
+                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2 text-sm"
+                      >
+                        <FaCheck /> Mark Replied
+                      </button>
+                    )}
                     <button
-                      onClick={() => handleMarkAsReplied(selectedMessage._id)}
-                      className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2 text-sm"
+                      onClick={() => handleDelete(selectedMessage._id)}
+                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2 text-sm"
                     >
-                      <FaCheck /> Mark Replied
+                      <FaTrash /> Delete
                     </button>
-                  )}
-                  <button
-                    onClick={() => handleDelete(selectedMessage._id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2 text-sm"
-                  >
-                    <FaTrash /> Delete
-                  </button>
-                </div>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2 text-sm">

@@ -13,11 +13,17 @@ const getUsers = async (req, res) => {
   }
 };
 
-// @desc    Create new admin user (superadmin only)
+// @desc    Create a new viewer user (superadmin only)
 // @route   POST /api/users
 const createUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
+
+    // Only allow creating 'viewer' accounts (no admin or superadmin)
+    const allowedRole = 'viewer';
+    if (role && role !== allowedRole) {
+      return res.status(400).json({ message: 'Only viewer accounts can be created' });
+    }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -28,7 +34,7 @@ const createUser = async (req, res) => {
       name,
       email,
       password,
-      role: role || 'admin',
+      role: allowedRole,
     });
 
     res.status(201).json({

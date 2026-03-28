@@ -14,7 +14,6 @@ const AdminManagement = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'admin',
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -50,7 +49,7 @@ const AdminManagement = () => {
     if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: '' }));
   };
 
-  const handleCreateAdmin = async (e) => {
+  const handleCreateViewer = async (e) => {
     e.preventDefault();
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
@@ -59,15 +58,16 @@ const AdminManagement = () => {
     }
 
     try {
+      // Role is fixed to 'viewer' on the backend
       await userAPI.create({
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        role: formData.role,
+        role: 'viewer',
       });
-      toast.success('Admin created successfully');
+      toast.success('Viewer account created successfully');
       setShowModal(false);
-      setFormData({ name: '', email: '', password: '', confirmPassword: '', role: 'admin' });
+      setFormData({ name: '', email: '', password: '', confirmPassword: '' });
       fetchUsers();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Creation failed');
@@ -88,8 +88,7 @@ const AdminManagement = () => {
   const getRoleBadgeClass = (role) => {
     const base = 'px-2 py-1 rounded-full text-xs font-medium';
     if (role === 'superadmin') return `${base} bg-purple-500/20 text-purple-600 dark:text-purple-400`;
-    if (role === 'admin') return `${base} bg-blue-500/20 text-blue-600 dark:text-blue-400`;
-    return `${base} bg-yellow-500/20 text-yellow-600 dark:text-yellow-400`;
+    return `${base} bg-blue-500/20 text-blue-600 dark:text-blue-400`; // viewer
   };
 
   if (loading) {
@@ -103,9 +102,9 @@ const AdminManagement = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Admin Users</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">User Management</h1>
         <button onClick={() => setShowModal(true)} className="btn-primary">
-          <FaUserPlus className="mr-2" /> Create New Admin
+          <FaUserPlus className="mr-2" /> Create Viewer Account
         </button>
       </div>
 
@@ -150,17 +149,17 @@ const AdminManagement = () => {
         </table>
       </div>
 
-      {/* Modal */}
+      {/* Modal for Create Viewer */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
           <div className="max-w-md w-full backdrop-blur-md bg-white/90 dark:bg-slate-800/90 border border-white/20 dark:border-slate-700/30 rounded-2xl p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Create New Admin</h3>
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Create Viewer Account</h3>
               <button onClick={() => setShowModal(false)} className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
                 <FaTimes />
               </button>
             </div>
-            <form onSubmit={handleCreateAdmin} className="space-y-4">
+            <form onSubmit={handleCreateViewer} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name *</label>
                 <input
@@ -219,22 +218,8 @@ const AdminManagement = () => {
                 {formErrors.confirmPassword && <p className="text-xs text-red-500 mt-1">{formErrors.confirmPassword}</p>}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Role</label>
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-lg bg-white/50 dark:bg-slate-700/50 border border-white/20 dark:border-slate-600/30 text-slate-900 dark:text-white focus:outline-none focus:border-primary"
-                >
-                  <option value="admin">Admin</option>
-                  <option value="editor">Editor</option>
-                  <option value="superadmin">Super Admin</option>
-                </select>
-              </div>
-
               <div className="flex gap-3 pt-2">
-                <button type="submit" className="btn-primary flex-1">Create</button>
+                <button type="submit" className="btn-primary flex-1">Create Viewer</button>
                 <button type="button" onClick={() => setShowModal(false)} className="btn-outline flex-1">Cancel</button>
               </div>
             </form>

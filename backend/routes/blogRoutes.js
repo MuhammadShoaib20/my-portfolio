@@ -10,27 +10,27 @@ const {
   likeBlog,
   togglePublish
 } = require('../controllers/blogController');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { protect, authorize, allowViewerReadOnly } = require('../middleware/authMiddleware');
 
-// ✅ PUBLIC
+// PUBLIC
 router.get('/', getBlogs);
 
-// ✅ ADMIN (MUST BE ABOVE :slug)
+// ADMIN – list all blogs (viewer allowed)
 router.get(
   '/admin',
   protect,
-  authorize('admin', 'superadmin'),
+  allowViewerReadOnly,
   getAllBlogs
 );
 
-// ✅ PUBLIC (dynamic LAST)
+// PUBLIC (dynamic)
 router.get('/:slug', getBlogBySlug);
 
-// ✅ ADMIN ACTIONS
-router.post('/', protect, authorize('admin', 'superadmin'), createBlog);
-router.put('/:id', protect, authorize('admin', 'superadmin'), updateBlog);
-router.delete('/:id', protect, authorize('admin', 'superadmin'), deleteBlog);
-router.put('/:id/like', protect, authorize('admin', 'superadmin'), likeBlog);
-router.put('/:id/publish', protect, authorize('admin', 'superadmin'), togglePublish);
+// ADMIN ACTIONS (write only for superadmin)
+router.post('/', protect, authorize('superadmin'), createBlog);
+router.put('/:id', protect, authorize('superadmin'), updateBlog);
+router.delete('/:id', protect, authorize('superadmin'), deleteBlog);
+router.put('/:id/like', protect, authorize('superadmin'), likeBlog);
+router.put('/:id/publish', protect, authorize('superadmin'), togglePublish);
 
 module.exports = router;

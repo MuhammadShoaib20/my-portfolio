@@ -3,6 +3,7 @@ const router = express.Router();
 const { uploadFile } = require('../controllers/uploadController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-router.post('/', protect, authorize('admin', 'superadmin'), uploadFile);
+// Only superadmin can upload files
+router.post('/', protect, authorize('superadmin'), uploadFile);
 
 module.exports = router;

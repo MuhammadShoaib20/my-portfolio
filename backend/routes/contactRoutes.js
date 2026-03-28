@@ -1,10 +1,5 @@
-// ============================================
-// IMPORT PACKAGES
-// ============================================
 const express = require('express');
 const router = express.Router();
-
-// Import controllers
 const {
   sendMessage,
   getAllMessages,
@@ -12,24 +7,15 @@ const {
   updateMessageStatus,
   deleteMessage
 } = require('../controllers/contactController');
-
-// Import middleware
-const { protect, authorize } = require('../middleware/authMiddleware');
-
-// ============================================
-// ROUTES
-// ============================================
+const { protect, authorize, allowViewerReadOnly } = require('../middleware/authMiddleware');
 
 // Public route
 router.post('/', sendMessage);
 
-// Protected routes (Admin or Superadmin only)
-router.get('/', protect, authorize('admin', 'superadmin'), getAllMessages);
-router.get('/:id', protect, authorize('admin', 'superadmin'), getMessageById);
-router.put('/:id', protect, authorize('admin', 'superadmin'), updateMessageStatus);
-router.delete('/:id', protect, authorize('admin', 'superadmin'), deleteMessage);
+// Protected routes – viewers can read, only superadmin can modify
+router.get('/', protect, allowViewerReadOnly, getAllMessages);
+router.get('/:id', protect, allowViewerReadOnly, getMessageById);
+router.put('/:id', protect, authorize('superadmin'), updateMessageStatus);
+router.delete('/:id', protect, authorize('superadmin'), deleteMessage);
 
-// ============================================
-// EXPORT
-// ============================================
 module.exports = router;

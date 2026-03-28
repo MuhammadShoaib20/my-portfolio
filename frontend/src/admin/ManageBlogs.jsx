@@ -1,29 +1,32 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { blogsAPI } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { FaPlus, FaEdit, FaTrash, FaEye, FaHeart, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 
 const ManageBlogs = () => {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'superadmin';
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchBlogs();
   }, []);
-const fetchBlogs = async () => {
-  try {
-    setLoading(true);
-    const res = await blogsAPI.getAllAdmin();
-    setBlogs(res.data.blogs);
-  } catch (error) {
-    console.error('Fetch blogs error:', error); // 👈 log full error
-    console.error('Response data:', error.response?.data); // 👈 server response
-    toast.error(error.response?.data?.message || 'Failed to fetch blogs');
-  } finally {
-    setLoading(false);
-  }
-};
+
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true);
+      const res = await blogsAPI.getAllAdmin();
+      setBlogs(res.data.blogs);
+    } catch (error) {
+      console.error('Fetch blogs error:', error);
+      toast.error(error.response?.data?.message || 'Failed to fetch blogs');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDelete = async (id, title) => {
     if (!window.confirm(`Are you sure you want to delete "${title}"?`)) return;
@@ -63,18 +66,22 @@ const fetchBlogs = async () => {
           <h1 className="text-2xl sm:text-3xl font-bold">Manage Blogs</h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">Create, edit, and manage your blog posts</p>
         </div>
-        <Link to="/admin/blogs/add" className="btn-primary text-sm sm:text-base">
-          <FaPlus className="mr-2" /> Write New Post
-        </Link>
+        {isSuperAdmin && (
+          <Link to="/admin/blogs/add" className="btn-primary text-sm sm:text-base">
+            <FaPlus className="mr-2" /> Write New Post
+          </Link>
+        )}
       </div>
 
       {blogs.length === 0 ? (
         <div className="text-center py-12 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
           <h3 className="text-xl font-semibold mb-2">No blog posts yet</h3>
           <p className="text-slate-600 dark:text-slate-400 mb-4">Write your first blog post to get started!</p>
-          <Link to="/admin/blogs/add" className="btn-primary inline-flex">
-            <FaPlus className="mr-2" /> Write New Post
-          </Link>
+          {isSuperAdmin && (
+            <Link to="/admin/blogs/add" className="btn-primary inline-flex">
+              <FaPlus className="mr-2" /> Write New Post
+            </Link>
+          )}
         </div>
       ) : (
         <div className="overflow-x-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
@@ -117,23 +124,29 @@ const fetchBlogs = async () => {
                     </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <button
-                      onClick={() => handleTogglePublish(blog._id)}
-                      className={`p-2 rounded-lg transition ${blog.isPublished ? 'text-green-500' : 'text-slate-400 hover:text-green-500'}`}
-                      title={blog.isPublished ? 'Unpublish (move to Draft)' : 'Publish'}
-                    >
-                      {blog.isPublished ? <FaToggleOn size={20} /> : <FaToggleOff size={20} />}
-                    </button>
+                    {isSuperAdmin ? (
+                      <button
+                        onClick={() => handleTogglePublish(blog._id)}
+                        className={`p-2 rounded-lg transition ${blog.isPublished ? 'text-green-500' : 'text-slate-400 hover:text-green-500'}`}
+                        title={blog.isPublished ? 'Unpublish (move to Draft)' : 'Publish'}
+                      >
+                        {blog.isPublished ? <FaToggleOn size={20} /> : <FaToggleOff size={20} />}
+                      </button>
+                    ) : (
+                      <span className="text-xs text-slate-500">{blog.isPublished ? 'Published' : 'Draft'}</span>
+                    )}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex gap-2">
-                      <Link to={`/admin/blogs/edit/${blog._id}`} className="p-2 rounded-lg text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition" title="Edit">
-                        <FaEdit />
-                      </Link>
-                      <button onClick={() => handleDelete(blog._id, blog.title)} className="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition" title="Delete">
-                        <FaTrash />
-                      </button>
-                    </div>
+                    {isSuperAdmin && (
+                      <div className="flex gap-2">
+                        <Link to={`/admin/blogs/edit/${blog._id}`} className="p-2 rounded-lg text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition" title="Edit">
+                          <FaEdit />
+                        </Link>
+                        <button onClick={() => handleDelete(blog._id, blog.title)} className="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition" title="Delete">
+                          <FaTrash />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

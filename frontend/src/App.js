@@ -25,6 +25,7 @@ import NotFound from "./pages/NotFound";
 // Admin Pages
 import Login from "./admin/Login";
 import CreateAdmin from "./admin/CreateAdmin";
+import Register from "./admin/Register"; // <-- new import
 import Dashboard from "./admin/Dashboard";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import ManageProjects from "./admin/ManageProjects";
@@ -37,7 +38,7 @@ import Messages from "./admin/Messages";
 import EditProfile from "./admin/EditProfile";
 import Settings from "./admin/Settings";
 import AdminManagement from "./admin/AdminManagement";
-import ResumeManagement from "./admin/ResumeManagement"; // new import
+import ResumeManagement from "./admin/ResumeManagement";
 
 function App() {
   return (
@@ -72,6 +73,7 @@ function App() {
               {/* Public admin routes (no layout) */}
               <Route path="/admin/login" element={<Login />} />
               <Route path="/admin/create" element={<CreateAdmin />} />
+              <Route path="/admin/register" element={<Register />} /> {/* <-- new route */}
 
               {/* Protected admin routes with AdminLayout */}
               <Route element={<AdminLayout />}>

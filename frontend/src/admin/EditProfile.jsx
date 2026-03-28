@@ -8,7 +8,8 @@ import toast from 'react-hot-toast';
 
 const EditProfile = () => {
   const navigate = useNavigate();
-  const { refreshUser } = useAuth();
+  const { user, refreshUser } = useAuth();
+  const isViewer = user?.role === 'viewer';
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [formData, setFormData] = useState({
@@ -73,6 +74,7 @@ const EditProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isViewer) return;
     setLoading(true);
     try {
       await profileAPI.updateProfile(formData);
@@ -108,6 +110,7 @@ const EditProfile = () => {
           <ImageUploader
             currentImage={formData.profileImage}
             onImageUpload={(url) => setFormData({ ...formData, profileImage: url })}
+            disabled={isViewer}
           />
         </div>
 
@@ -121,7 +124,7 @@ const EditProfile = () => {
             value={formData.name}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-            disabled={loading}
+            disabled={loading || isViewer}
           />
         </div>
 
@@ -135,7 +138,7 @@ const EditProfile = () => {
             value={formData.title}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-            disabled={loading}
+            disabled={loading || isViewer}
           />
         </div>
 
@@ -149,7 +152,7 @@ const EditProfile = () => {
             value={formData.bio}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-            disabled={loading}
+            disabled={loading || isViewer}
           />
         </div>
 
@@ -167,7 +170,7 @@ const EditProfile = () => {
               value={formData.contactEmail}
               onChange={handleChange}
               className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-              disabled={loading}
+              disabled={loading || isViewer}
             />
           </div>
         </div>
@@ -184,7 +187,7 @@ const EditProfile = () => {
               value={formData.phone}
               onChange={handleChange}
               className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-              disabled={loading}
+              disabled={loading || isViewer}
             />
           </div>
         </div>
@@ -201,7 +204,7 @@ const EditProfile = () => {
               value={formData.address}
               onChange={handleChange}
               className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-              disabled={loading}
+              disabled={loading || isViewer}
             />
           </div>
         </div>
@@ -210,23 +213,28 @@ const EditProfile = () => {
 
         {/* Social Links Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SocialInput icon={FaGithub} name="social.github" value={formData.socialLinks.github} onChange={handleChange} disabled={loading} placeholder="GitHub URL" />
-          <SocialInput icon={FaLinkedin} name="social.linkedin" value={formData.socialLinks.linkedin} onChange={handleChange} disabled={loading} placeholder="LinkedIn URL" />
-          <SocialInput icon={FaTwitter} name="social.twitter" value={formData.socialLinks.twitter} onChange={handleChange} disabled={loading} placeholder="Twitter URL" />
-          <SocialInput icon={FaFacebook} name="social.facebook" value={formData.socialLinks.facebook} onChange={handleChange} disabled={loading} placeholder="Facebook URL" />
-          <SocialInput icon={FaInstagram} name="social.instagram" value={formData.socialLinks.instagram} onChange={handleChange} disabled={loading} placeholder="Instagram URL" />
-          <SocialInput icon={FaGlobe} name="social.website" value={formData.socialLinks.website} onChange={handleChange} disabled={loading} placeholder="Personal Website URL" />
+          <SocialInput icon={FaGithub} name="social.github" value={formData.socialLinks.github} onChange={handleChange} disabled={loading || isViewer} placeholder="GitHub URL" />
+          <SocialInput icon={FaLinkedin} name="social.linkedin" value={formData.socialLinks.linkedin} onChange={handleChange} disabled={loading || isViewer} placeholder="LinkedIn URL" />
+          <SocialInput icon={FaTwitter} name="social.twitter" value={formData.socialLinks.twitter} onChange={handleChange} disabled={loading || isViewer} placeholder="Twitter URL" />
+          <SocialInput icon={FaFacebook} name="social.facebook" value={formData.socialLinks.facebook} onChange={handleChange} disabled={loading || isViewer} placeholder="Facebook URL" />
+          <SocialInput icon={FaInstagram} name="social.instagram" value={formData.socialLinks.instagram} onChange={handleChange} disabled={loading || isViewer} placeholder="Instagram URL" />
+          <SocialInput icon={FaGlobe} name="social.website" value={formData.socialLinks.website} onChange={handleChange} disabled={loading || isViewer} placeholder="Personal Website URL" />
         </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-          <button type="submit" className="btn-primary flex-1" disabled={loading}>
-            {loading ? 'Saving...' : <><FaSave className="mr-2" /> Save Changes</>}
-          </button>
+          {!isViewer && (
+            <button type="submit" className="btn-primary flex-1" disabled={loading}>
+              {loading ? 'Saving...' : <><FaSave className="mr-2" /> Save Changes</>}
+            </button>
+          )}
           <button type="button" onClick={() => navigate('/admin/dashboard')} className="btn-outline flex-1" disabled={loading}>
             <FaTimes className="mr-2" /> Cancel
           </button>
         </div>
+        {isViewer && (
+          <p className="text-sm text-center text-slate-500 dark:text-slate-400">Viewer accounts cannot edit profile information.</p>
+        )}
       </form>
     </div>
   );

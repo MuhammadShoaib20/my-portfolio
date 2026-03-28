@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { projectsAPI } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { FaPlus, FaEdit, FaTrash, FaStar, FaEye, FaHeart } from 'react-icons/fa';
 
 const ManageProjects = () => {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'superadmin';
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,18 +65,22 @@ const ManageProjects = () => {
           <h1 className="text-2xl sm:text-3xl font-bold">Manage Projects</h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">Create, edit, and manage your portfolio projects</p>
         </div>
-        <Link to="/admin/projects/add" className="btn-primary text-sm sm:text-base">
-          <FaPlus className="mr-2" /> Add New Project
-        </Link>
+        {isSuperAdmin && (
+          <Link to="/admin/projects/add" className="btn-primary text-sm sm:text-base">
+            <FaPlus className="mr-2" /> Add New Project
+          </Link>
+        )}
       </div>
 
       {projects.length === 0 ? (
         <div className="text-center py-12 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
           <h3 className="text-xl font-semibold mb-2">No projects yet</h3>
           <p className="text-slate-600 dark:text-slate-400 mb-4">Create your first project to get started!</p>
-          <Link to="/admin/projects/add" className="btn-primary inline-flex">
-            <FaPlus className="mr-2" /> Add New Project
-          </Link>
+          {isSuperAdmin && (
+            <Link to="/admin/projects/add" className="btn-primary inline-flex">
+              <FaPlus className="mr-2" /> Add New Project
+            </Link>
+          )}
         </div>
       ) : (
         <div className="overflow-x-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
@@ -114,23 +121,29 @@ const ManageProjects = () => {
                     </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <button
-                      onClick={() => handleToggleFeatured(project._id)}
-                      className={`p-2 rounded-lg transition ${project.featured ? 'text-yellow-500' : 'text-slate-400 hover:text-yellow-500'}`}
-                      title={project.featured ? 'Remove featured' : 'Mark featured'}
-                    >
-                      <FaStar />
-                    </button>
+                    {isSuperAdmin ? (
+                      <button
+                        onClick={() => handleToggleFeatured(project._id)}
+                        className={`p-2 rounded-lg transition ${project.featured ? 'text-yellow-500' : 'text-slate-400 hover:text-yellow-500'}`}
+                        title={project.featured ? 'Remove featured' : 'Mark featured'}
+                      >
+                        <FaStar />
+                      </button>
+                    ) : (
+                      <span className="text-slate-500">{project.featured ? '★ Featured' : ''}</span>
+                    )}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex gap-2">
-                      <Link to={`/admin/projects/edit/${project._id}`} className="p-2 rounded-lg text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition" title="Edit">
-                        <FaEdit />
-                      </Link>
-                      <button onClick={() => handleDelete(project._id, project.title)} className="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition" title="Delete">
-                        <FaTrash />
-                      </button>
-                    </div>
+                    {isSuperAdmin && (
+                      <div className="flex gap-2">
+                        <Link to={`/admin/projects/edit/${project._id}`} className="p-2 rounded-lg text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition" title="Edit">
+                          <FaEdit />
+                        </Link>
+                        <button onClick={() => handleDelete(project._id, project.title)} className="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition" title="Delete">
+                          <FaTrash />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

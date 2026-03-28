@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { FaUser, FaSignInAlt } from 'react-icons/fa';
+
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
@@ -87,6 +88,11 @@ const Login = () => {
           {/* Optional create admin link */}
           <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
             First time? <Link to="/admin/create" className="text-primary hover:underline font-medium">Create Admin Account</Link>
+          </p>
+
+          {/* New registration link for viewers */}
+          <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
+            Don't have an account? <Link to="/admin/register" className="text-primary hover:underline font-medium">Create Viewer Account</Link>
           </p>
         </div>
       </div>
