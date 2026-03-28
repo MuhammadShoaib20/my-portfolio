@@ -102,7 +102,7 @@ const Home = () => {
             <div className="text-sm sm:text-base text-slate-600 dark:text-slate-400">Years Experience</div>
           </div>
           <div className="text-center p-6 rounded-2xl card">
-            <div className="text-xl sm:text-2xl font-bold text-primary mb-2">In Progress</div>
+            <div className="text-xl sm:text-2xl font-bold text-primary mb-2">3+</div>
             <div className="text-sm sm:text-base text-slate-600 dark:text-slate-400">Projects</div>
           </div>
           <div className="text-center p-6 rounded-2xl card">
