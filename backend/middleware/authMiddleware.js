@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';   // add .js
 
 // Protect routes
-const protect = async (req, res, next) => {
+export const protect = async (req, res, next) => {
   let token;
   try {
     if (
@@ -22,7 +22,7 @@ const protect = async (req, res, next) => {
 };
 
 // Role-based access – only for write operations
-const authorize = (...roles) => (req, res, next) => {
+export const authorize = (...roles) => (req, res, next) => {
   if (!roles.includes(req.user.role)) {
     return res.status(403).json({ message: 'Forbidden' });
   }
@@ -30,7 +30,7 @@ const authorize = (...roles) => (req, res, next) => {
 };
 
 // Viewer can only GET data, not modify anything
-const allowViewerReadOnly = (req, res, next) => {
+export const allowViewerReadOnly = (req, res, next) => {
   if (req.user.role === 'viewer' && req.method !== 'GET') {
     return res.status(403).json({
       message: 'Viewer accounts cannot modify data. Only superadmin can perform this action.'
@@ -38,5 +38,3 @@ const allowViewerReadOnly = (req, res, next) => {
   }
   next();
 };
-
-module.exports = { protect, authorize, allowViewerReadOnly };

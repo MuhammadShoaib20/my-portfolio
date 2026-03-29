@@ -46,6 +46,7 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/resumes', require('./routes/resumeRoutes'));
+app.use('/api/chat', require('./routes/chatRoutes')); 
 
 // 404 handler
 app.use((req, res) => {

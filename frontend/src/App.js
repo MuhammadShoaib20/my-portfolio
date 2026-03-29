@@ -10,6 +10,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import AdminLayout from "./components/layout/AdminLayout";
+import Chatbot from "./components/common/Chatbot";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -25,7 +26,7 @@ import NotFound from "./pages/NotFound";
 // Admin Pages
 import Login from "./admin/Login";
 import CreateAdmin from "./admin/CreateAdmin";
-import Register from "./admin/Register"; // <-- new import
+import Register from "./admin/Register";
 import Dashboard from "./admin/Dashboard";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import ManageProjects from "./admin/ManageProjects";
@@ -73,7 +74,7 @@ function App() {
               {/* Public admin routes (no layout) */}
               <Route path="/admin/login" element={<Login />} />
               <Route path="/admin/create" element={<CreateAdmin />} />
-              <Route path="/admin/register" element={<Register />} /> {/* <-- new route */}
+              <Route path="/admin/register" element={<Register />} />
 
               {/* Protected admin routes with AdminLayout */}
               <Route element={<AdminLayout />}>
@@ -176,6 +177,9 @@ function App() {
               </Route>
             </Routes>
             <Toaster position="top-right" />
+            
+            {/* ✅ Floating Chatbot - visible on all pages */}
+            <Chatbot />
           </div>
         </Router>
       </AuthProvider>
