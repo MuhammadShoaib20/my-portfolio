@@ -21,7 +21,7 @@ const protect = async (req, res, next) => {
   }
 };
 
-// Role-based access
+// Role-based access – only for write operations
 const authorize = (...roles) => (req, res, next) => {
   if (!roles.includes(req.user.role)) {
     return res.status(403).json({ message: 'Forbidden' });
@@ -29,4 +29,14 @@ const authorize = (...roles) => (req, res, next) => {
   next();
 };
 
-module.exports = { protect, authorize };
+// Viewer can only GET data, not modify anything
+const allowViewerReadOnly = (req, res, next) => {
+  if (req.user.role === 'viewer' && req.method !== 'GET') {
+    return res.status(403).json({
+      message: 'Viewer accounts cannot modify data. Only superadmin can perform this action.'
+    });
+  }
+  next();
+};
+
+module.exports = { protect, authorize, allowViewerReadOnly };

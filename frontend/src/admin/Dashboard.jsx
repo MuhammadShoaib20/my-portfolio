@@ -6,6 +6,7 @@ import { FaProjectDiagram, FaBlog, FaEnvelope, FaEye, FaHeart, FaPlus, FaUser } 
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'superadmin';
   const [stats, setStats] = useState({ totalProjects: 0, totalBlogs: 0, totalMessages: 0, unreadMessages: 0 });
   const [recentProjects, setRecentProjects] = useState([]);
   const [recentBlogs, setRecentBlogs] = useState([]);
@@ -69,24 +70,26 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Quick Actions */}
-      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 sm:p-6 shadow-sm">
-        <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-        <div className="flex flex-wrap gap-3">
-          <Link to="/admin/projects/add" className="btn-primary text-sm sm:text-base">
-            <FaPlus className="mr-2" /> New Project
-          </Link>
-          <Link to="/admin/blogs/add" className="btn-primary text-sm sm:text-base">
-            <FaPlus className="mr-2" /> New Blog
-          </Link>
-          <Link to="/admin/messages" className="btn-primary text-sm sm:text-base">
-            <FaEnvelope className="mr-2" /> Messages
-          </Link>
-          <Link to="/admin/profile" className="btn-primary text-sm sm:text-base">
-            <FaUser className="mr-2" /> Edit Profile
-          </Link>
+      {/* Quick Actions - only for superadmin */}
+      {isSuperAdmin && (
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 sm:p-6 shadow-sm">
+          <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+          <div className="flex flex-wrap gap-3">
+            <Link to="/admin/projects/add" className="btn-primary text-sm sm:text-base">
+              <FaPlus className="mr-2" /> New Project
+            </Link>
+            <Link to="/admin/blogs/add" className="btn-primary text-sm sm:text-base">
+              <FaPlus className="mr-2" /> New Blog
+            </Link>
+            <Link to="/admin/messages" className="btn-primary text-sm sm:text-base">
+              <FaEnvelope className="mr-2" /> Messages
+            </Link>
+            <Link to="/admin/profile" className="btn-primary text-sm sm:text-base">
+              <FaUser className="mr-2" /> Edit Profile
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Recent Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

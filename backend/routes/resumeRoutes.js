@@ -9,17 +9,17 @@ const {
   toggleResumeActive,
   downloadResume,
 } = require('../controllers/resumeController');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { protect, authorize, allowViewerReadOnly } = require('../middleware/authMiddleware');
 
 // Public routes
 router.get('/active', getActiveResumes);
-router.get('/download/:id', downloadResume); // 👈 new download route
+router.get('/download/:id', downloadResume);
 
-// Admin routes (protected)
-router.get('/', protect, authorize('admin', 'superadmin'), getAllResumes);
-router.post('/', protect, authorize('admin', 'superadmin'), createResume);
-router.put('/:id', protect, authorize('admin', 'superadmin'), updateResume);
-router.delete('/:id', protect, authorize('admin', 'superadmin'), deleteResume);
-router.put('/:id/toggle', protect, authorize('admin', 'superadmin'), toggleResumeActive);
+// Admin routes – viewers can see list, only superadmin can modify
+router.get('/', protect, allowViewerReadOnly, getAllResumes);
+router.post('/', protect, authorize('superadmin'), createResume);
+router.put('/:id', protect, authorize('superadmin'), updateResume);
+router.delete('/:id', protect, authorize('superadmin'), deleteResume);
+router.put('/:id/toggle', protect, authorize('superadmin'), toggleResumeActive);
 
 module.exports = router;

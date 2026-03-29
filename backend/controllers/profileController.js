@@ -6,7 +6,7 @@ const User = require('../models/User');
 // @access  Public
 const getProfile = async (req, res) => {
   try {
-    const adminUser = await User.findOne({ role: { $in: ['admin', 'superadmin'] } });
+    const adminUser = await User.findOne({ role: { $in: ['superadmin'] } }); // changed
     if (!adminUser) return res.status(404).json({ message: 'Admin not found' });
 
     let profile = await Profile.findOne({ user: adminUser._id });
@@ -18,7 +18,7 @@ const getProfile = async (req, res) => {
         title: 'Full Stack Developer',
         bio: '',
         profileImage: '',
-        contactEmail: adminUser.email, // default from user email
+        contactEmail: adminUser.email,
         phone: '',
         address: '',
         socialLinks: {},
@@ -50,7 +50,7 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const adminUser = req.user;
-    if (!['admin', 'superadmin'].includes(adminUser.role)) {
+    if (adminUser.role !== 'superadmin') {
       return res.status(403).json({ message: 'Not authorized' });
     }
 

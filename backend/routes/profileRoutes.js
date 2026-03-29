@@ -6,7 +6,7 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 // Public route to get profile
 router.get('/', getProfile);
 
-// Admin only route to update profile
-router.put('/', protect, authorize('admin', 'superadmin'), updateProfile);
+// Admin only route to update profile – only superadmin
+router.put('/', protect, authorize('superadmin'), updateProfile);
 
 module.exports = router;

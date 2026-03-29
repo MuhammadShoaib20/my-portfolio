@@ -11,7 +11,7 @@ const {
 // All routes below require authentication
 router.use(protect);
 
-// Password change (any authenticated user)
+// Password change (any authenticated user – but viewers cannot access this page, so it's fine)
 router.put('/password', changePassword);
 
 // Superadmin only

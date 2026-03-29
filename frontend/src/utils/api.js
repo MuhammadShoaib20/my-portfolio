@@ -68,6 +68,7 @@ export const authAPI = {
   logout: () => api.post('/auth/logout'),
   updateProfile: (data) => api.put('/auth/updateprofile', data),
   changePassword: (data) => api.put('/auth/changepassword', data),
+  registerViewer: (data) => api.post('/auth/register-viewer', data), // <-- new
 };
 
 /* ============================
